@@ -1,9 +1,6 @@
 package passcard.domain.enums;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-@JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum Role {
+public enum RoleEnum {
     USER,
     ADMIN,
     SYSTEM
