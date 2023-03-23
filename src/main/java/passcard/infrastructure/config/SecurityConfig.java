@@ -34,8 +34,8 @@ public class SecurityConfig {
 
         return username -> repository.findByUsername(username)
                 .map(user -> User.builder()
-                        .username(passwordEncoder().encode(user.getUsername()))
-                        .password(user.getPassword())
+                        .password(passwordEncoder().encode(user.getPassword()))
+                        .username(user.getUsername())
                         .roles(user.getRoles())
                         .build()
                 );
