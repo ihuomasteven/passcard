@@ -1,9 +1,5 @@
 package passcard.infrastructure.config;
 
-import passcard.infrastructure.security.AuthEntryPoint;
-import passcard.infrastructure.security.AuthFilter;
-import passcard.infrastructure.security.AuthenticationManager;
-import passcard.infrastructure.security.SecurityContextRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,10 +7,17 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
+import passcard.domain.entity.User;
+import passcard.infrastructure.repository.UserRepository;
+import passcard.infrastructure.security.AuthEntryPoint;
+import passcard.infrastructure.security.AuthFilter;
+import passcard.infrastructure.security.AuthenticationManager;
+import passcard.infrastructure.security.SecurityContextRepository;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -24,6 +27,18 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public ReactiveUserDetailsService userDetailsService(UserRepository repository) {
+
+        return username -> repository.findByUsername(username)
+                .map(user -> User.builder()
+                        .username(passwordEncoder().encode(user.getUsername()))
+                        .password(user.getPassword())
+                        .roles(user.getRoles())
+                        .build()
+                );
     }
 
     @Bean
@@ -39,6 +54,7 @@ public class SecurityConfig {
                 .authenticationEntryPoint(authEntryPoint)
                 .and()
                 .csrf().disable()
+                .logout().disable()
                 .httpBasic().disable()
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .authenticationManager(authenticationManager)
