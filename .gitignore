@@ -36,4 +36,4 @@ out/
 .vscode/
 
 .DS_Store
-testdb.mv.db
+**.db
