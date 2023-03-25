@@ -1,17 +1,16 @@
 package passcard.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
-import passcard.domain.common.BaseEntity;
-import passcard.domain.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.springframework.data.annotation.Id;
+import lombok.*;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import passcard.domain.common.BaseEntity;
+import passcard.domain.enums.Role;
 
 import java.util.Collection;
 import java.util.HashSet;
