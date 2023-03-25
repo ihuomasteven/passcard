@@ -1,5 +1,6 @@
 package passcard.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import passcard.domain.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -48,6 +49,7 @@ public class User implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    @JsonIgnore
     @Override
     public String getPassword() {
         return password;
