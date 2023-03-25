@@ -40,7 +40,8 @@ public class User implements UserDetails {
     @NotNull
     @Email
     private String email;
-    
+
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
     @Override
