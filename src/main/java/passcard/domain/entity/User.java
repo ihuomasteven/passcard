@@ -1,14 +1,12 @@
 package passcard.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+import passcard.domain.common.BaseEntity;
 import passcard.domain.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,12 +20,11 @@ import java.util.stream.Collectors;
 
 @Data
 @Builder
+@Table("users")
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("users")
-public class User implements UserDetails {
-    @Id
-    private Long id;
+@EqualsAndHashCode(callSuper = true)
+public class User extends BaseEntity implements UserDetails {
 
     @NotNull
     @Size(min = 5, max = 20)
