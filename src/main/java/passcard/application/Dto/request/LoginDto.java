@@ -3,6 +3,8 @@ package passcard.application.Dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.io.Serializable;
+
 public record LoginDto(
     @Size(min = 3, max = 30)
     @NotBlank(message = "Please fill in your username or email")
@@ -10,4 +12,4 @@ public record LoginDto(
 
     @NotBlank(message = "Login password cannot be blank")
     String password
-){}
+) implements Serializable {}
