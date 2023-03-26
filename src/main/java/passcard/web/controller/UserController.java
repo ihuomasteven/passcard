@@ -1,5 +1,6 @@
 package passcard.web.controller;
 
+import org.springframework.http.ResponseEntity;
 import passcard.application.Dto.request.LoginDto;
 import passcard.application.Dto.response.ApiResponse;
 import passcard.domain.entity.User;
@@ -27,7 +28,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Mono<ApiResponse> authenticate(@RequestBody LoginDto loginDto) {
-        return userService.authenticate(loginDto);
+    public Mono<ResponseEntity<ApiResponse>> authenticate(@RequestBody LoginDto loginDto) {
+        return userService
+                .authenticate(loginDto)
+                .map(apiResponse -> ResponseEntity.ok().body(apiResponse))
+                .switchIfEmpty(Mono.just(ResponseEntity.badRequest().build()));
     }
 }
