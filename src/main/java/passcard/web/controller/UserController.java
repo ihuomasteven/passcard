@@ -1,15 +1,15 @@
 package passcard.web.controller;
 
-import org.springframework.http.ResponseEntity;
-import passcard.application.Dto.request.LoginDto;
-import passcard.application.Dto.response.ApiResponse;
-import passcard.domain.entity.User;
-import passcard.infrastructure.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import passcard.application.Dto.request.LoginDto;
+import passcard.application.Dto.response.AuthResponse;
+import passcard.domain.entity.User;
+import passcard.infrastructure.service.UserService;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -28,10 +28,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Mono<ResponseEntity<ApiResponse>> authenticate(@RequestBody LoginDto loginDto) {
+    public Mono<ResponseEntity<AuthResponse>> authenticate(@RequestBody LoginDto loginDto) {
         return userService
                 .authenticate(loginDto)
-                .map(apiResponse -> ResponseEntity.ok().body(apiResponse))
+                .map(authResponse -> ResponseEntity.ok().body(authResponse))
                 .switchIfEmpty(Mono.just(ResponseEntity.badRequest().build()));
     }
 }
