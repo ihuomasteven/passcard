@@ -1,6 +1,7 @@
 package passcard.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -45,6 +46,11 @@ public class User extends BaseEntity implements UserDetails {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
+    }
+
+    @JsonProperty
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @JsonIgnore
