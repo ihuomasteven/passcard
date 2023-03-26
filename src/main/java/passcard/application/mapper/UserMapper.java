@@ -11,8 +11,8 @@ public interface UserMapper {
 
     UserMapper MAPPER = Mappers.getMapper(UserMapper.class);
 
-    LoginDto mapToUserDto(User user);
+    LoginDto toLoginDto(User user);
 
     @Mapping(target = "authorities", ignore = true)
-    User mapToUser(LoginDto loginDto);
+    User toUser(LoginDto loginDto);
 }
