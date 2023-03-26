@@ -1,5 +1,6 @@
 package passcard.infrastructure.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import passcard.application.Dto.request.LoginDto;
 import passcard.application.Dto.response.ApiResponse;
@@ -15,20 +16,12 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
-
-    public UserService(
-            UserRepository repository,
-            UserMapper mapper,
-            PasswordEncoder passwordEncoder) {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public User createUser(User user) {
         user = User.builder()
