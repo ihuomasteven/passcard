@@ -1,6 +1,7 @@
 package passcard.web.controller;
 
 import passcard.application.Dto.request.LoginDto;
+import passcard.application.Dto.response.ApiResponse;
 import passcard.domain.entity.User;
 import passcard.infrastructure.service.UserService;
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Mono<User> authenticate(@RequestBody LoginDto loginDto) {
+    public Mono<ApiResponse> authenticate(@RequestBody LoginDto loginDto) {
         return userService.authenticate(loginDto);
     }
 }

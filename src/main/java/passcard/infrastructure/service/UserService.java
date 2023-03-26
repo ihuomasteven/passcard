@@ -1,5 +1,9 @@
 package passcard.infrastructure.service;
 
+import org.springframework.transaction.annotation.Transactional;
+import passcard.application.Dto.request.LoginDto;
+import passcard.application.Dto.response.ApiResponse;
+import passcard.application.mapper.UserMapper;
 import passcard.domain.entity.User;
 import passcard.infrastructure.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +19,14 @@ public class UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper mapper;
 
-    public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
+    public UserService(
+            UserRepository repository,
+            UserMapper mapper,
+            PasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.mapper = mapper;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -32,6 +41,7 @@ public class UserService {
         return user;
     }
 
+    @Transactional
     public Mono<User> register(User user) {
         return repository.findByUsername(user.getUsername())
                 .flatMap(u -> Mono.error(new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists")))
@@ -39,19 +49,17 @@ public class UserService {
                 .cast(User.class);
     }
 
-    public Mono<User> login(String username, String password) {
-        return repository.findByUsername(username)
-                .flatMap(user -> {
-                    if (passwordEncoder.matches(password, user.getPassword())) {
-                        log.info(user.getPassword());
-                        return Mono.just(user);
+    public Mono<ApiResponse> authenticate(LoginDto loginDto) {
+
+        return repository.findByUsername(loginDto.username())
+                .map(user -> {
+                    if (passwordEncoder.matches(loginDto.password(), user.getPassword())) {
+                        return new ApiResponse(user.toString(), true);
                     } else {
-                        return Mono.error(
-                                new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
+                        return new ApiResponse("Incorrect username or password", false);
                     }
                 })
-                .switchIfEmpty(Mono.error(
-                        new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password")))
-                .cast(User.class);
+                .defaultIfEmpty(new ApiResponse("User not found", false));
     }
+
 }
