@@ -2,9 +2,6 @@ package passcard.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,17 +22,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity implements UserDetails {
-
-    @NotNull
-    @Size(min = 5, max = 20)
+    
     private String username;
-
-    @NotNull
-    @Size(min = 8, max = 20)
     private String password;
-
-    @NotNull
-    @Email
     private String email;
 
     @Builder.Default
