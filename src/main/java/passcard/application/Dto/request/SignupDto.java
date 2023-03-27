@@ -1,15 +1,21 @@
 package passcard.application.Dto.request;
 
 import jakarta.validation.constraints.NotNull;
+import passcard.domain.enums.Role;
+
+import java.io.Serializable;
+import java.util.Set;
 
 public record SignupDto(
 
-    @NotNull(message = "username can be null but not blank")
+    @NotNull(message = "Username cannot be blank")
     String username,
 
-    @NotNull(message = "Registration email can be null but not blank")
+    @NotNull(message = "Email cannot be blank")
     String email,
 
-    @NotNull(message = "Registration password cannot be null")
-    String password
-){}
+    @NotNull(message = "Password cannot be blank")
+    String password,
+
+    Set<Role> roles
+) implements Serializable {}
