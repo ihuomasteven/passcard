@@ -1,7 +1,5 @@
 package passcard.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity implements UserDetails {
-    
+
     private String username;
     private String password;
     private String email;
@@ -37,12 +35,6 @@ public class User extends BaseEntity implements UserDetails {
                 .collect(Collectors.toList());
     }
 
-    @JsonProperty
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @JsonIgnore
     @Override
     public String getPassword() {
         return password;
