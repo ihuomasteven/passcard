@@ -34,6 +34,6 @@ public class UserController {
         return userService
                 .authenticate(loginDto)
                 .map(authResponse -> ResponseEntity.ok().body(authResponse))
-                .switchIfEmpty(Mono.just(ResponseEntity.badRequest().build()));
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 }
