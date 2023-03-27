@@ -2,14 +2,14 @@ package passcard.infrastructure.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 import passcard.application.Dto.request.LoginDto;
+import passcard.application.Dto.request.SignupDto;
+import passcard.application.Dto.response.ApiResponse;
 import passcard.application.Dto.response.AuthResponse;
 import passcard.application.exception.LoginException;
+import passcard.application.exception.SignupException;
 import passcard.application.mapper.UserMapper;
 import passcard.domain.entity.User;
 import passcard.infrastructure.repository.UserRepository;
@@ -26,23 +26,43 @@ public class UserService {
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
 
-    public User createUser(User user) {
-        user = User.builder()
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .roles(user.getRoles())
-                .password(passwordEncoder.encode(user.getPassword()))
-                .build();
+    public User createUser(SignupDto signupDto) {
 
-        return user;
+        return User.builder()
+                .email(signupDto.email())
+                .username(signupDto.username())
+                .roles(signupDto.roles())
+                .password(passwordEncoder.encode(signupDto.password()))
+                .build();
     }
 
-    @Transactional
-    public Mono<User> register(User user) {
-        return repository.findByUsername(user.getUsername())
-                .flatMap(u -> Mono.error(new ResponseStatusException(HttpStatus.CONFLICT, "Username already exists")))
-                .switchIfEmpty(repository.save(createUser(user)))
-                .cast(User.class);
+
+    public Mono<ApiResponse> register(SignupDto signupDto) {
+        Mono<Boolean> isUsername = repository.existsByUsername(signupDto.username());
+        Mono<Boolean> isEmail = repository.existsByEmail(signupDto.email());
+
+        return Mono.zip(isUsername, isEmail)
+                .flatMap(tuple -> {
+                    boolean usernameExists = tuple.getT1();
+                    boolean emailExists = tuple.getT2();
+
+                    if (usernameExists) {
+                        return Mono.error(new SignupException(signupDto.username(), "Username already exists"));
+                    }
+
+                    if (emailExists) {
+                        return Mono.error(new SignupException(signupDto.email(), "Email already exists"));
+                    }
+
+//                    if (!EmailValidator.getInstance().isValid(user.getEmail())) {
+//                        return Mono.error(new SignupException(user.getEmail(), "Invalid email address"));
+//                    }
+
+                    User savedUser = createUser(signupDto);
+                    return repository.save(savedUser)
+                            .map(user -> new ApiResponse("User registered successfully", true))
+                            .onErrorResume(error -> Mono.just(new ApiResponse(error.getMessage(), false)));
+                });
     }
 
     public Mono<AuthResponse> authenticate(LoginDto loginDto) {

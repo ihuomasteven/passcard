@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import passcard.application.Dto.request.LoginDto;
+import passcard.application.Dto.request.SignupDto;
+import passcard.application.Dto.response.ApiResponse;
 import passcard.application.Dto.response.AuthResponse;
-import passcard.domain.entity.User;
 import passcard.infrastructure.service.UserService;
 import reactor.core.publisher.Mono;
 
@@ -23,8 +24,10 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Mono<User> register(@Valid @RequestBody User user) {
-        return userService.register(user);
+    public Mono<ResponseEntity<ApiResponse>> register(@Valid @RequestBody SignupDto signupDto) {
+        return userService.register(signupDto)
+                .map(apiResponse -> ResponseEntity.ok().body(apiResponse))
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
     @PostMapping("/login")
