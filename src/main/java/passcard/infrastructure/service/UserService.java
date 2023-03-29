@@ -12,9 +12,11 @@ import passcard.application.exception.LoginException;
 import passcard.application.exception.SignupException;
 import passcard.application.mapper.UserMapper;
 import passcard.domain.entity.User;
+import passcard.domain.event.UserRegisteredEvent;
 import passcard.infrastructure.repository.UserRepository;
 import passcard.infrastructure.security.TokenProvider;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 
 @Slf4j
 @Service
@@ -25,6 +27,7 @@ public class UserService {
     private final UserRepository repository;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final Sinks.Many<UserRegisteredEvent> eventPublisher;
 
     public User createUser(SignupDto signupDto) {
 
@@ -61,6 +64,7 @@ public class UserService {
                     User savedUser = createUser(signupDto);
                     return repository.save(savedUser)
                             .map(user -> new ApiResponse("User registered successfully", true))
+                            .doOnSuccess(user -> eventPublisher.tryEmitNext(new UserRegisteredEvent(mapper.toUser(signupDto))))
                             .onErrorResume(error -> Mono.just(new ApiResponse(error.getMessage(), false)));
                 });
     }
