@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Account Status Changed</title>
+    <link rel="stylesheet" type="text/css" href="${request.contextPath}/static/account_activity.css">
+</head>
+
+<body>
+    <div class="tw-body">
+        <div class="tw-card-header">
+            <span>Account Status Changed</span>
+        </div>
+        <div class="tw-card-body">
+            <h1 class="tw-h1">Hello ${username},</h1>
+            <p class="">
+                <span>A new activity was initiated on your account.</span>
+                <br/><span>Action: <strong>${action}</strong></span>
+                <br/><span>Status: <strong>${actionStatus}</strong></span>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
