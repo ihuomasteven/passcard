@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Account Status Changed</title>
+    <link rel="stylesheet" type="text/css" href="${request.contextPath}/static/email_verification.css">
+</head>
+
+<body>
+    <div class="tw-card-header">
+        <span>Email Confirmation Required</span>
+    </div>
+
+    <div class="tw-card-body">
+        <h1 class="tw-h1">Hello ${username},</h1>
+        <p class="">
+            <span>Thank you for joining <strong>Customer Engagement App</strong>, an efficient and smart solution to manage your health!</span><br/>
+            <span>To complete the registration process, please confirm your email address to activate your account</span>
+        </p>
+    </div>
+    <div>
+        <div class="button__td">
+            <a href="" class="button__a" target="_blank"> </a>
+            <a class="button__a" href="${emailVerificationUrl}" target="_blank" rel="noopener">
+                Confirm email
+            </a>
+        </div>
+    </div>
+    <div class="">
+        <p>
+            Contact our support team if you have any questions or concerns.&nbsp;
+            <a href="javascript:void(0);" target="_blank" rel="noopener">
+                Ask us any question
+            </a>
+        </p>
+        <p class="tw-signoff">Our best, <br/> The Passcard team</p>
+    </div>
+</body>
+</html>
