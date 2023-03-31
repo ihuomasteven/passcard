@@ -58,10 +58,10 @@ public class UserService {
                         return Mono.error(new SignupException(signupDto.email(), "Email already exists"));
                     }
 
-                    User savedUser = createUser(signupDto);
-                    return repository.save(savedUser)
+                    User newUser = createUser(signupDto);
+                    return repository.save(newUser)
                             .map(user -> new ApiResponse("User registered successfully", true))
-                            .doOnSuccess(user -> eventPublisher.publishEvent(new SignedUpEvent(savedUser)))
+                            .doOnSuccess(user -> eventPublisher.publishEvent(new SignedUpEvent(newUser)))
                             .onErrorResume(error -> Mono.just(new ApiResponse(error.getMessage(), false)));
                 });
     }
@@ -75,7 +75,7 @@ public class UserService {
                         Long expiryDuration = tokenProvider.getExpiryDuration();
 
                         eventPublisher.publishEvent(new SignedInEvent(user));
-                        
+
                         return Mono.just(new AuthResponse(accessToken, expiryDuration));
                     }
                     else {
