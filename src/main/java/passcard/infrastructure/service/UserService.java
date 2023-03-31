@@ -2,6 +2,7 @@ package passcard.infrastructure.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import passcard.application.Dto.request.LoginDto;
@@ -12,11 +13,11 @@ import passcard.application.exception.LoginException;
 import passcard.application.exception.SignupException;
 import passcard.application.mapper.UserMapper;
 import passcard.domain.entity.User;
-import passcard.domain.event.UserRegisteredEvent;
+import passcard.domain.event.SignedInEvent;
+import passcard.domain.event.SignedUpEvent;
 import passcard.infrastructure.repository.UserRepository;
 import passcard.infrastructure.security.TokenProvider;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
 
 @Slf4j
 @Service
@@ -27,7 +28,7 @@ public class UserService {
     private final UserRepository repository;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
-    private final Sinks.Many<UserRegisteredEvent> eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
 
     public User createUser(SignupDto signupDto) {
 
@@ -57,14 +58,10 @@ public class UserService {
                         return Mono.error(new SignupException(signupDto.email(), "Email already exists"));
                     }
 
-//                    if (!EmailValidator.getInstance().isValid(user.getEmail())) {
-//                        return Mono.error(new SignupException(user.getEmail(), "Invalid email address"));
-//                    }
-
                     User savedUser = createUser(signupDto);
                     return repository.save(savedUser)
                             .map(user -> new ApiResponse("User registered successfully", true))
-                            .doOnSuccess(user -> eventPublisher.tryEmitNext(new UserRegisteredEvent(mapper.toUser(signupDto))))
+                            .doOnSuccess(user -> eventPublisher.publishEvent(new SignedUpEvent(savedUser)))
                             .onErrorResume(error -> Mono.just(new ApiResponse(error.getMessage(), false)));
                 });
     }
@@ -77,6 +74,8 @@ public class UserService {
                         String accessToken = tokenProvider.generateToken(user);
                         Long expiryDuration = tokenProvider.getExpiryDuration();
 
+                        eventPublisher.publishEvent(new SignedInEvent(user));
+                        
                         return Mono.just(new AuthResponse(accessToken, expiryDuration));
                     }
                     else {
