@@ -8,3 +8,21 @@ public enum Role {
     ADMIN,
     SYSTEM
 }
+
+
+//public enum Role {
+//    USER("USER"),
+//    ADMIN("ADMIN"),
+//    SYSTEM("SYSTEM");
+//
+//    private final String jsonValue;
+//
+//    private Role(final String json) {
+//        this.jsonValue = json;
+//    }
+//
+//    @JsonValue
+//    public String jsonValue() {
+//        return this.jsonValue;
+//    }
+//}
