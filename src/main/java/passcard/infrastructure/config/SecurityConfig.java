@@ -24,6 +24,18 @@ import passcard.infrastructure.security.SecurityContextRepository;
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
 
+    protected static final String[] STATIC_WHITELIST = {
+            "/js/**",
+            "/css/**",
+            "/images/**",
+            "/public/**",
+            "/webjars/**",
+            "/favicon.ico",
+            "/h2-console/**",
+            "/actuator/info",
+            "/actuator/health"
+    };
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -61,6 +73,7 @@ public class SecurityConfig {
                 .securityContextRepository(securityContextRepository)
                 .authorizeExchange(auth -> auth
                         .pathMatchers(HttpMethod.POST, "/api/user/*").permitAll()
+                        .pathMatchers(HttpMethod.GET, STATIC_WHITELIST).permitAll()
                         .anyExchange().authenticated()
                 )
                 .addFilterAt(authFilter, SecurityWebFiltersOrder.AUTHENTICATION)
