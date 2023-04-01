@@ -1,24 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Account Status Changed</title>
-    <link rel="stylesheet" type="text/css" href="${request.contextPath}/static/account_activity.css">
+<#include "/common/meta.html">
+<#include "/common/account_style.html">
 </head>
-
 <body>
-    <div class="tw-body">
-        <div class="tw-card-header">
-            <span>Account Status Changed</span>
-        </div>
-        <div class="tw-card-body">
-            <h1 class="tw-h1">Hello ${username},</h1>
-            <p class="">
-                <span>A new activity was initiated on your account.</span>
-                <br/><span>Action: <strong>${action}</strong></span>
-                <br/><span>Status: <strong>${actionStatus}</strong></span>
-            </p>
-        </div>
-    </div>
+    <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="header">
+                Account Activity Notification
+            </td>
+        </tr>
+        <tr>
+            <td class="message">
+                <h2>Hello ${username},</h2>
+                <p>A new activity was initiated on your account.</p>
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td width="30%">Action:</td>
+                        <td>${action}</td>
+                    </tr>
+                    <tr>
+                        <td>Status:</td>
+                        <td>${actionStatus}</td>
+                    </tr>
+                    <tr>
+                        <td>Browser:</td>
+                        <td>${browser}</td>
+                    </tr>
+                    <tr>
+                        <td>DateTime:</td>
+                        <td>${datetime}</td>
+                    </tr>
+                </table>
+<!--                <p>If this was not you, please <a href=${resetPasswordLink}>reset your password</a> immediately.</p>-->
+<!--                <p>If you have any questions or concerns, please don't hesitate to <a href=${contactUsLink}>contact us</a>.</p>-->
+                <p>Thank you for choosing our service.</p>
+                <p>Best regards,</p>
+                <p>The ${companyName} team</p>
+            </td>
+        </tr>
+        <#include "/common/footer.html">
+    </table>
+
 </body>
 </html>
