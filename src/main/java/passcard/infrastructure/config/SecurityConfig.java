@@ -16,7 +16,7 @@ import passcard.domain.entity.User;
 import passcard.infrastructure.repository.UserRepository;
 import passcard.infrastructure.security.AuthEntryPoint;
 import passcard.infrastructure.security.AuthFilter;
-import passcard.infrastructure.security.AuthenticationManager;
+import passcard.infrastructure.security.AuthManager;
 import passcard.infrastructure.security.SecurityContextRepository;
 
 @Configuration
@@ -31,9 +31,8 @@ public class SecurityConfig {
             "/public/**",
             "/webjars/**",
             "/favicon.ico",
-            "/h2-console/**",
-            "/actuator/info",
-            "/actuator/health"
+            "/actuator/**",
+            "/h2-console/**"
     };
 
     @Bean
@@ -58,7 +57,7 @@ public class SecurityConfig {
             ServerHttpSecurity http,
             AuthFilter authFilter,
             AuthEntryPoint authEntryPoint,
-            AuthenticationManager authenticationManager,
+            AuthManager authManager,
             SecurityContextRepository securityContextRepository
     ) {
         return http
@@ -69,7 +68,7 @@ public class SecurityConfig {
                 .logout().disable()
                 .httpBasic().disable()
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-                .authenticationManager(authenticationManager)
+                .authenticationManager(authManager)
                 .securityContextRepository(securityContextRepository)
                 .authorizeExchange(auth -> auth
                         .pathMatchers(HttpMethod.POST, "/api/user/*").permitAll()

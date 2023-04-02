@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class AuthenticationManager implements ReactiveAuthenticationManager {
+public class AuthManager implements ReactiveAuthenticationManager {
 
     private TokenProvider tokenProvider;
 
