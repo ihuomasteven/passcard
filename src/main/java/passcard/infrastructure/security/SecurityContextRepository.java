@@ -13,10 +13,10 @@ import reactor.core.publisher.Mono;
 @Component
 public class SecurityContextRepository implements ServerSecurityContextRepository {
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthManager authManager;
 
-    public SecurityContextRepository(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
+    public SecurityContextRepository(AuthManager authManager) {
+        this.authManager = authManager;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
                 .flatMap(authHeader -> {
                     String authToken = authHeader.substring(7);
                     Authentication auth = new UsernamePasswordAuthenticationToken(authToken, authToken);
-                    return this.authenticationManager.authenticate(auth).map(SecurityContextImpl::new);
+                    return this.authManager.authenticate(auth).map(SecurityContextImpl::new);
                 });
     }
 }
