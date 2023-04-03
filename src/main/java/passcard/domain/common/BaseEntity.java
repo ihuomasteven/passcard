@@ -7,6 +7,7 @@ import org.springframework.data.relational.core.mapping.Column;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 public class BaseEntity implements Serializable {
@@ -24,7 +25,7 @@ public class BaseEntity implements Serializable {
     @JsonIgnore
     @CreatedDate
     @Column("created_dt")
-    private String createdDate;
+    private LocalDateTime createdDate;
 
     @JsonIgnore
     @LastModifiedBy
@@ -34,7 +35,7 @@ public class BaseEntity implements Serializable {
     @JsonIgnore
     @LastModifiedDate
     @Column("updated_dt")
-    private String updatedDate;
+    private LocalDateTime updatedDate;
 
     @JsonIgnore
     @Version
