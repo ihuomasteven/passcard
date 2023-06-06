@@ -31,6 +31,15 @@ server:
             enabled: false
         path: /error
 
+management:
+    endpoint:
+        health:
+            show-details: always
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+
 logging:
     level:
         web: DEBUG
