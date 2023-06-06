@@ -61,12 +61,10 @@ public class SecurityConfig {
             SecurityContextRepository securityContextRepository
     ) {
         return http
-                .exceptionHandling()
-                .authenticationEntryPoint(authEntryPoint)
-                .and()
-                .csrf().disable()
-                .logout().disable()
-                .httpBasic().disable()
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .logout(ServerHttpSecurity.LogoutSpec::disable)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .exceptionHandling(x -> x.authenticationEntryPoint(authEntryPoint))
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .authenticationManager(authManager)
                 .securityContextRepository(securityContextRepository)
