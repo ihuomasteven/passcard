@@ -11,7 +11,7 @@ import passcard.application.Dto.response.ApiResponse;
 import passcard.application.Dto.response.AuthResponse;
 import passcard.application.exception.LoginException;
 import passcard.application.exception.SignupException;
-import passcard.application.mapper.UserMapper;
+//import passcard.application.mapper.UserMapper;
 import passcard.domain.entity.User;
 import passcard.domain.event.SignedInEvent;
 import passcard.domain.event.SignedUpEvent;
@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserMapper mapper;
+//    private final UserMapper mapper;
     private final UserRepository repository;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
