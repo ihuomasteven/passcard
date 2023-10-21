@@ -2,13 +2,14 @@
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>
-                %date %thread %green(%level) [%cyan(%logger{10}):%magenta(%line)] %red(%method)
-                | %msg%n
-            </pattern>
-            <charset>UTF-8</charset>
+            <pattern>%date %highlight(%-5level) --- [%5thread] %cyan(%-40.40logger{40}) : %msg %n</pattern>
+            <charset>utf8</charset>
         </encoder>
     </appender>
+
+    <logger name="meetona.web" level="debug" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
 
     <appender name="gelf_seq" class="de.siegmar.logbackgelf.GelfUdpAppender">
         <graylogHost>localhost</graylogHost>

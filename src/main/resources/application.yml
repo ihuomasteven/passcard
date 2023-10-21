@@ -1,46 +1,33 @@
 spring:
-    application:
-        name: passcard
-
-    main:
-        banner-mode: off
-        web-application-type: reactive
-
-    profiles:
-        active: prod
-
-    h2:
-        console:
-            enabled: true
-            path: /h2-console
-
-    r2dbc:
-        password: ''
-        url: r2dbc:h2:file:///./test
-        username: sa
-
-    devtools:
-        restart:
-            enabled: true
-        livereload:
-            enabled: true
+  application:
+    name: passcard
+  main:
+    banner-mode: off
+  profiles:
+    active: prod
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
 
 server:
-    error:
-        whitelabel:
-            enabled: false
-        path: /error
+  port: 3001
+  error:
+    whitelabel:
+      enabled: false
+    path: /error
 
 management:
-    endpoint:
-        health:
-            show-details: always
-    endpoints:
-        web:
-            exposure:
-                include: "*"
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 logging:
-    level:
-        web: DEBUG
-        org.springframework.web: DEBUG
+  level:
+    web: DEBUG
+    org.springframework.web: DEBUG
