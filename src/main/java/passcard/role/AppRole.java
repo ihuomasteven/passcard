@@ -1,4 +1,4 @@
-package passcard.shared.enums;
+package passcard.role;
 
 public enum AppRole {
     USER,

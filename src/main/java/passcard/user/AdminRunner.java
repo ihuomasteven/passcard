@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import passcard.role.Role;
 import passcard.role.RoleRepository;
-import passcard.shared.enums.AppRole;
+import passcard.role.AppRole;
 
 import java.util.Collections;
 

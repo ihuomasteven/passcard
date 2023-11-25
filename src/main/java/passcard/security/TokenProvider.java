@@ -25,15 +25,15 @@ import static java.util.stream.Collectors.joining;
 public class TokenProvider {
 
     private SecretKeySpec key;
-    private final JwtSetting jwtSetting;
+    private final JwtProperty jwtProperty;
 
-    public TokenProvider(JwtSetting jwtSetting) {
-        this.jwtSetting = jwtSetting;
+    public TokenProvider(JwtProperty jwtProperty) {
+        this.jwtProperty = jwtProperty;
     }
 
     @PostConstruct
     protected void init() {
-        byte[] keyBytes = jwtSetting.getSecret().getBytes();
+        byte[] keyBytes = jwtProperty.getSecret().getBytes();
         key = new SecretKeySpec(keyBytes, "HmacSHA512");
     }
 
@@ -58,7 +58,7 @@ public class TokenProvider {
     public String createToken(Authentication authentication) {
 //        User userPrincipal = (User) authentication.getPrincipal();
         String username = authentication.getName();
-        Instant expiryDate = Instant.now().plusMillis(jwtSetting.getExpiration());
+        Instant expiryDate = Instant.now().plusMillis(jwtProperty.getExpiration());
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Claims claims = Jwts.claims().setSubject(username);
@@ -101,7 +101,7 @@ public class TokenProvider {
     }
 
     public Long getExpiryDuration() {
-        return jwtSetting.getExpiration();
+        return jwtProperty.getExpiration();
     }
 
     public boolean validateToken(String token) {

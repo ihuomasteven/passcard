@@ -1,7 +1,6 @@
 package passcard.role;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import passcard.shared.enums.AppRole;
 
 import java.util.UUID;
 

@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import passcard.shared.entity.BaseEntity;
-import passcard.shared.enums.AppRole;
 import passcard.user.User;
 
 import java.util.Collection;

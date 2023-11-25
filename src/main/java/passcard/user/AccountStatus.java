@@ -1,4 +1,4 @@
-package passcard.shared.enums;
+package passcard.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import passcard.role.Role;
 import passcard.role.RoleRepository;
 import passcard.security.TokenProvider;
-import passcard.shared.enums.AppRole;
+import passcard.role.AppRole;
 import passcard.shared.exception.AppException;
 import passcard.shared.exception.LoginException;
 import passcard.shared.exception.SignupException;
