@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import passcard.shared.exception.*;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,45 +31,33 @@ public class ControllerAdvice {
         this.messageSource = messageSource;
     }
 
-
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ResponseEntity<ApiResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        var response = new ApiResponse<String>();
-        response.setData(ex.getMessage());
-        response.setSuccess(false);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    public ResponseEntity<ServiceResponse<String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(new ServiceResponse<>(ex.getMessage(), false));
     }
 
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ApiResponse<String>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
-        var response = new ApiResponse<String>();
-        response.setData(ex.getMessage());
-        response.setSuccess(false);
-        return ResponseEntity.badRequest().body(response);
+    public ResponseEntity<ServiceResponse<String>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body(new ServiceResponse<>(ex.getMessage(), false));
     }
 
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ApiResponse<String> processValidationError(MethodArgumentNotValidException ex) {
+    public ServiceResponse<String> processValidationError(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
-        List<ObjectError> allErrors = result.getAllErrors();
-        var response = new ApiResponse<String>();
-        response.setSuccess(false);
-        response.setData(String.join("\n", processAllErrors(allErrors)));
-        return response;
+        return new ServiceResponse<>(String.join("\n", processAllErrors(result.getAllErrors())), false);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
-        // Customize your error response here
-        String errorMessage = "Access denied: " + ex.getMessage();
-        return new ResponseEntity<>(errorMessage, HttpStatus.FORBIDDEN);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
 
     /**
@@ -91,161 +78,106 @@ public class ControllerAdvice {
      * @return the string
      */
     private String resolveLocalizedErrorMessage(ObjectError objectError) {
-        Locale currentLocale = LocaleContextHolder.getLocale();
-        String localizedErrorMessage = messageSource.getMessage(objectError, currentLocale);
+        String localizedErrorMessage = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
         log.info(localizedErrorMessage);
         return localizedErrorMessage;
     }
 
-    @ExceptionHandler(value = AppException.class)
+    @ResponseBody
+    @ExceptionHandler(AppException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public ApiResponse<String> handleAppException(AppException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    public ServiceResponse<String> handleAppException(AppException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = ResourceAlreadyInUseException.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.IM_USED)
-    @ResponseBody
-    public ApiResponse<String> handleResourceAlreadyInUseException(ResourceAlreadyInUseException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    @ExceptionHandler(ResourceAlreadyInUseException.class)
+    public ServiceResponse<String> handleResourceAlreadyInUseException(ResourceAlreadyInUseException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = ResourceNotFoundException.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public ApiResponse<String> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ServiceResponse<String> handleResourceNotFoundException(ResourceNotFoundException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = BadRequestException.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ApiResponse<String> handleBadRequestException(BadRequestException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    @ExceptionHandler(BadRequestException.class)
+    public ServiceResponse<String> handleBadRequestException(BadRequestException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = UsernameNotFoundException.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public ApiResponse<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ServiceResponse<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = LoginException.class)
+    @ResponseBody
+    @ExceptionHandler(LoginException.class)
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ResponseBody
-    public ApiResponse<String> handleUserLoginException(LoginException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    public ServiceResponse<String> handleUserLoginException(LoginException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = BadCredentialsException.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ResponseBody
-    public ApiResponse<String> handleBadCredentialsException(BadCredentialsException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    @ExceptionHandler(BadCredentialsException.class)
+    public ServiceResponse<String> handleBadCredentialsException(BadCredentialsException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = SignupException.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ResponseBody
-    public ApiResponse<String> handleUserRegistrationException(SignupException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    @ExceptionHandler(InsertionFailedException.class)
+    public ServiceResponse<String> handleUserRegistrationException(InsertionFailedException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = PasswordResetLinkException.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ResponseBody
-    public ApiResponse<String> handlePasswordResetLinkException(PasswordResetLinkException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    @ExceptionHandler(PasswordResetLinkException.class)
+    public ServiceResponse<String> handlePasswordResetLinkException(PasswordResetLinkException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = PasswordResetException.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ResponseBody
-    public ApiResponse<String> handlePasswordResetException(PasswordResetException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    @ExceptionHandler(PasswordResetException.class)
+    public ServiceResponse<String> handlePasswordResetException(PasswordResetException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = MailSendException.class)
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ResponseBody
-    public ApiResponse<String> handleMailSendException(MailSendException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
-    }
-
-    @ExceptionHandler(value = InvalidTokenRequestException.class)
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-    @ResponseBody
-    public ApiResponse<String> handleInvalidTokenException(InvalidTokenRequestException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    @ExceptionHandler(InvalidTokenRequestException.class)
+    public ServiceResponse<String> handleInvalidTokenException(InvalidTokenRequestException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = UpdatePasswordException.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ResponseBody
-    public ApiResponse<String> handleUpdatePasswordException(UpdatePasswordException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    @ExceptionHandler(UpdatePasswordException.class)
+    public ServiceResponse<String> handleUpdatePasswordException(UpdatePasswordException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-
-    @ExceptionHandler(value = TokenRefreshException.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ResponseBody
-    public ApiResponse<String> handleTokenRefreshException(TokenRefreshException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    @ExceptionHandler(TokenRefreshException.class)
+    public ServiceResponse<String> handleTokenRefreshException(TokenRefreshException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
 
-    @ExceptionHandler(value = LogoutException.class)
+    @ResponseBody
+    @ExceptionHandler(LogoutException.class)
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    @ResponseBody
-    public ApiResponse<String> handleUserLogoutException(LogoutException ex) {
-        var apiResponse = new ApiResponse<String>();
-        apiResponse.setSuccess(false);
-        apiResponse.setData(ex.getMessage());
-        return apiResponse;
+    public ServiceResponse<String> handleUserLogoutException(LogoutException ex) {
+        return new ServiceResponse<>(ex.getMessage(), false);
     }
-
 }

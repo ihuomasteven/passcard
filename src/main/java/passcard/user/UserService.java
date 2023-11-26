@@ -17,7 +17,7 @@ import passcard.role.AppRole;
 import passcard.shared.exception.AppException;
 import passcard.shared.exception.LoginException;
 import passcard.shared.exception.SignupException;
-import passcard.shared.response.ApiResponse;
+import passcard.shared.response.ServiceResponse;
 import passcard.user.dtos.AuthDto;
 import passcard.user.dtos.UserDto;
 import passcard.user.dtos.UserRequest;
@@ -44,7 +44,7 @@ public class UserService implements IUserService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public ApiResponse<UserDto> authenticate(AuthDto authDto) {
+    public ServiceResponse<UserDto> authenticate(AuthDto authDto) {
         var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authDto.username(),
                 authDto.password())
@@ -58,42 +58,42 @@ public class UserService implements IUserService {
         if (user == null) throw new LoginException("User not found");
 
         UserDto userDto = mapper.toDto(user).setAccessToken(accessToken);
-        var response = new ApiResponse<>(userDto, true);
+        var response = new ServiceResponse<>(userDto, true);
 
         userActionProducer.sendMessage(userDto);
         return response;
     }
 
     @Override
-    public ApiResponse<List<UserDto>> getAll(Pageable pageable) {
+    public ServiceResponse<List<UserDto>> getAll(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
 
         List<UserDto> userDto = users.stream()
                 .map(mapper::toDto)
                 .toList();
 
-        ApiResponse<List<UserDto>> response = new ApiResponse<>(userDto, true);
+        ServiceResponse<List<UserDto>> response = new ServiceResponse<>(userDto, true);
 
         log.info("Fetched units => {}", userDto);
         return response;
     }
 
     @Override
-    public ApiResponse<UserDto> getById(UUID id) {
+    public ServiceResponse<UserDto> getById(UUID id) {
         Optional<User> userOptional = userRepository.findById(id);
 
         User user = userOptional.orElse(null); // Unwrap the Optional to get a Unit or null
 
         UserDto userDto = mapper.toDto(user);
 
-        var response = new ApiResponse<>(userDto, true);
+        var response = new ServiceResponse<>(userDto, true);
 
         log.info("Fetched unit => {}", userDto);
         return response;
     }
 
     @Transactional
-    public ApiResponse<UserDto> add(UserRequest userRequest) {
+    public ServiceResponse<UserDto> add(UserRequest userRequest) {
         boolean isUsernameExists = userRepository.existsByUsername(userRequest.username());
 
         if (isUsernameExists) {
@@ -105,7 +105,7 @@ public class UserService implements IUserService {
 
         UserDto userDto = mapper.toDto(newUser);
 
-        var response = new ApiResponse<>(userDto, true);
+        var response = new ServiceResponse<>(userDto, true);
 
         userActionProducer.sendMessage(userDto);
         return response;
@@ -113,7 +113,7 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public ApiResponse<UserDto> update(UUID id, UserRequest request) {
+    public ServiceResponse<UserDto> update(UUID id, UserRequest request) {
         boolean isUserExists = userRepository.existsById(id);
 
         if(isUserExists) {
@@ -125,7 +125,7 @@ public class UserService implements IUserService {
         userRepository.save(newUser);
         UserDto updatedUser = mapper.toDto(newUser);
 
-        var response = new ApiResponse<>(updatedUser, true);
+        var response = new ServiceResponse<>(updatedUser, true);
 
         userActionProducer.sendMessage(updatedUser);
         return response;
@@ -133,7 +133,7 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public ApiResponse<UserDto> delete(UUID id) {
+    public ServiceResponse<UserDto> delete(UUID id) {
         boolean isUserExists = userRepository.existsById(id);
 
         if(isUserExists){
@@ -143,7 +143,7 @@ public class UserService implements IUserService {
         userRepository.deleteById(id);
         UserDto deletedUser = new UserDto(id, null, null, null, null, null);
 
-        var response = new ApiResponse<>(deletedUser, true);
+        var response = new ServiceResponse<>(deletedUser, true);
 
         userActionProducer.sendMessage(deletedUser);
         return response;
